@@ -56,3 +56,7 @@ def add_page(request, category_name_slug):
 
     context_dict = {'form':form, 'category':category}
     return render(request, 'rango/add_page.html', context_dict)
+
+
+def about(request):
+    return render(request, 'rango/about.html', {'context': 'Hello, i am Rango!'})
