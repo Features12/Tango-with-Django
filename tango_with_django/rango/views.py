@@ -1,7 +1,7 @@
 from datetime import datetime
-
+from rango.bing_search import run_query
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Category, Page
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 from django.contrib.auth import authenticate, logout
@@ -34,21 +34,35 @@ def index(request):
         request.session['visits'] = visits
     context_dict['visits'] = visits
 
-    response = render(request, 'rango/index.html', context_dict)
+    return render(request, 'rango/index.html', context_dict)
 
-    return response
 
 
 def show_category(request, category_name_slug):
     context_dict = {}
+    context_dict['result_list'] = None
+    context_dict['query'] = None
+    if request.method == 'POST':
+        query = request.POST['query'].strip()
+
+        if query:
+            # Запускаем нашу функцию Bing, чтобы получить список результатов поиска!
+            result_list = run_query(query)
+
+            context_dict['result_list'] = result_list
+            context_dict['query'] = query
+
     try:
-        category = Category.objects.get(slug= category_name_slug)
-        pages = Page.objects.filter(category=category)
-        context_dict['pages'] = [pages]
+        category = Category.objects.get(slug=category_name_slug)
+        context_dict['category_name'] = category.name
+        pages = Page.objects.filter(category=category).order_by('-views')
+        context_dict['pages'] = pages
         context_dict['category'] = category
     except Category.DoesNotExist:
-        context_dict['category'] = None
-        context_dict['pages'] = None
+        pass
+
+    if not context_dict['query']:
+        context_dict['query'] = category.name
 
     return render(request, 'rango/category.html', context_dict)
 
@@ -91,6 +105,37 @@ def add_page(request, category_name_slug):
 
 def about(request):
     return render(request, 'rango/about.html', {})
+
+
+def search(request):
+
+    result_list = []
+
+    if request.method == 'POST':
+        query = request.POST['query'].strip()
+
+        if query:
+            # Запускаем нашу Bing функцию, чтобы получить список результатов!
+            result_list = run_query(query)
+
+    return render(request, 'rango/search.html', {'result_list': result_list})
+
+
+def track_url(request):
+    page_id = None
+    url = '/rango/'
+    if request.method == 'GET':
+        if 'page_id' in request.GET:
+            page_id = request.GET['page_id']
+            try:
+                page = Page.objects.get(id=page_id)
+                page.views = page.views + 1
+                page.save()
+                url = page.url
+            except:
+                pass
+
+    return redirect(url)
 
 
 # def register(request):
