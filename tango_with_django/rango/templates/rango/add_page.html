@@ -1,66 +1,34 @@
-{% extends 'rango/base.html' %}
-	{% load staticfiles %}
-	{% block title_block %}
-		Add Page
-	{% endblock %}
+{% extends "rango/base.html" %}
 
-	{% block body_block %}
-        <div>
-		{% if category %}
+{% block title %}Add a New Page to {{ category_name }}{% endblock %}
 
-        <h1>Add a Page to {{category.name}}</h1>
+{% block body_block %}
+<div class="hero-unit">
+    <h1>Add a Page</h1>
 
-        <form id="page_form" method="post" action="/rango/category/{{ category.slug }}/add_page/">
+    <br/>
 
-            {% csrf_token %}
-            {% for hidden in form.hidden_fields %}
-                {{ hidden }}
-            {% endfor %}
+    <div class="container">
 
-            {% for field in form.visible_fields %}
-                {{ field.errors }}
-                {{ field.help_text }}
-                {{ field }}
-            {% endfor %}
-
-            <input type="submit" name="submit" value="Add Page" />
-        </form>
-
+		{% if not category_name_url %}
+			<div style="color: red;">The specified category does not exist!</div>
 		{% else %}
-			The specified category does not exist!
-		{% endif%}
+        	<form class="span6" id="page_form" method="post" action="/rango/category/{{category_name_url}}/add_page/">
 
+            	{% csrf_token %}
+            	{% for hidden in form.hidden_fields %}
+            	{{ hidden }}
+            	{% endfor %}
 
-
-		</div>
-
-	{% endblock %}
-
-	<!DOCTYPE html>
-	<html>
-	    <head>
-	        <title>Rango - Add Page</title>
-	    </head>
-	    <body>
-			{% if category %}
-
-	        <h1>Add a Page to {{category.name}}</h1>
-	        <form id="page_form" method="post" action="/rango/category/{{ category.slug }}/add_page/">
-	            {% csrf_token %}
-	            {% for hidden in form.hidden_fields %}
-	                {{ hidden }}
-	            {% endfor %}
-	            {% for field in form.visible_fields %}
-	                {{ field.errors }}
-	                {{ field.help_text }}
-	                {{ field }}
-	            {% endfor %}
-	            <input type="submit" name="submit" value="Add Page" />
-	        </form>
-
-			{% else %}
-				The specified category does not exist!
-			{% endif%}
-
-	    </body>
-	</html>
+            	{% for field in form.visible_fields %}
+            	{{ field.errors }}<br/>
+            	{{ field.help_text}}
+            	{{ field }}
+            	{% endfor %}
+            	<br/>
+            	<input class="btn btn-primary" type="submit" name="submit" value="Create Page"/>
+        	</form>
+		{% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,39 +1,44 @@
-<!DOCTYPE html>
+{% extends "rango/base.html" %}
 
-{% load staticfiles %}
+{% block title %}Welcome to Rango!{% endblock %}
 
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Rango</title>
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
-</head>
-<body>
-    <h1>Rango thins is ...</h1>
-    <div>
-       {% if categories %}
+{% block body_block %}
+<div class="hero-unit">
+    <h1>Ready to Rango</h1>
+
+    <p>Find, Add, Share and Rango useful links and resources.</p>
+</div>
+
+<div class="row-fluid">
+    <div class="span6">
+        <h2>Top Five Categories</h2>
+        {% if categories %}
         <ul>
             {% for category in categories %}
-                <li>
-                    <a href="/rango/category/{{ category.slug }}">{{ category.name }}</a>
-                </li>
+            <li><a href="/rango/category/{{ category.url }}">{{ category.name }}</a></li>
             {% endfor %}
         </ul>
         {% else %}
-            <strong>There are no categories present</strong>
+        <strong>No categories at present.</strong>
         {% endif %}
+
     </div>
-    <div>
-       {% if user.is_authenticated %}
-            <a href="/rango/restricted/">Restricted Page</a><br />
-            <a href="/rango/logout/">Logout</a><br />
+    <!--/span-->
+    <div class="span6">
+        <h2>Top Five Pages</h2>
+        {% if pages %}
+        <ul>
+            {% for page in pages %}
+            <li><a href="{{ page.url}}">{{ page.title }}</a> - {{ page.category}} ({{ page.views }} view(s))</li>
+            {% endfor %}
+        </ul>
         {% else %}
-            <a href="/rango/register/">Register Here</a><br />
-            <a href="/rango/login/">Login</a><br />
+        <strong>No pages at present.</strong>
         {% endif %}
-            <a href="/rango/about/">About</a><br/>
-            <a href="/rango/add_category/">Add a New Category</a><br />
-        <img src="{% static 'images/1.PNG' %}" alt='Picture of rango'>
+
     </div>
-</body>
-</html>
+    <!--/span-->
+</div><!--/row-->
+
+
+{% endblock %}
