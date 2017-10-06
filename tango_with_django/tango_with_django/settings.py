@@ -37,8 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'registration',
-    'rango',
+    'registration', # django-reqistration-redux
+    'rango', # our application
+    'bootstrap_toolkit', # django-bootstrap-toolkit
 ]
 
 MIDDLEWARE = [

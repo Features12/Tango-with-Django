@@ -63,7 +63,7 @@ def run_query(search_terms):
 
     # Перехватываем исключение URLError - произошла ошибка при подключении!
     except urllib2.URLError as e:
-        print "Error when querying the Bing API: ", e
+        print ("Error when querying the Bing API: ", e)
 
     # Возвращаем список результатов вызывающей функции.
     return results
